@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carousel</title>
+    <style>
+        @media screen and (max-width: 768px) {
+            html {
+                /* 小于768px，1rem=40px */
+                font-size: 375%;
+            }
+        }
+        @media screen and (min-width: 768px) {
+            html {
+                /* 768px-992px每11.2像素宽字体减小2px(60px-80px) */
+                font-size: calc(375% + (100vw - 768px) / 11.2);
+            }
+        }
+        @media screen and (min-width: 992px) {
+            html {
+                /* 992px-1200px每10.4像素宽字体减小2px(80px-100px) */
+                font-size: calc(500% + (100vw - 992px) / 10.4);
+            }
+        }
+        @media screen and (min-width: 1200px) {
+            html {
+                /* 大于1200px，1rem=100px */
+                font-size:625%;
+            }
+        }
+        #container,body,html,ul,li{
+            margin: 0;
+            padding: 0;
+        }
+        #container{
+            position: relative;
+            margin: 0 auto;
+            width: 5rem;
+            height: 3.32rem;
+            overflow: hidden;
+        }
+        #banner{
+            position: absolute;
+            left:-5rem;
+            width: 30rem;
+
+        }
+        img{
+            width: 5rem;
+            float: left;
+        }
+        .arrow{
+            display: none;
+            position: absolute;
+            text-decoration: none;
+            z-index: 2;
+            line-height:3.32rem;
+            font-size: 0.5rem;
+        }
+        .normal{
+
+        }
+        #prev{
+            left:0;
+        }
+        #next{
+            right: 0;
+        }
+        ul{
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0.05rem;
+            text-align: center;
+            list-style: none;
+        }
+        li{
+            display: inline-block;
+            width: 0.1rem;
+            height: 0.1rem;
+            border: 1px solid red;
+            border-radius: 50%;
+            cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <a href="javascript:;" id="prev" class="arrow">&lt;</a>
+    <a href="javascript:;" id="next" class="arrow">&gt;</a>
+    <div id="banner">
+        <img class="normal" src="img/4.jpg" alt="">
+        <img class="normal" src="img/1.jpg" alt="">
+        <img class="normal" src="img/2.jpg" alt="">
+        <img class="normal" src="img/3.jpg" alt="">
+        <img class="normal" src="img/4.jpg" alt="">
+        <img class="normal" src="img/1.jpg" alt="">
+    </div>
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+<script>
+    var prevBtn = document.getElementById('prev');
+    var nextBtn = document.getElementById('next');
+    var banners = document.getElementById('banner');
+    var container = document.getElementById('container');
+    var lists = document.getElementsByTagName('li');
+    var i = 1;
+    showDot(i);
+    dotSwitch();
+    prevBtn.onclick = function () {
+       prev();
+    };
+    nextBtn.onclick = function () {
+       next();
+    };
+
+    function showDot(index) {
+        for(var i = 0;i<lists.length;i++){
+            if(i === index-1){
+                lists[i].style.backgroundColor = 'yellow';
+            }else{
+                lists[i].style.backgroundColor = '';
+            }
+        }
+    }
+
+    function dotSwitch() {
+        for(var j = 0;j<lists.length;j++){
+            (function (index) {
+                lists[index].onclick = function () {
+                    i = index+1;
+                    showDot(i);
+                    doAnimate(i);
+                }
+            })(j)
+        }
+    }
+
+    function doAnimate(i) {
+        banners.style.transition = 'left 0.6s ease-in-out';
+        banners.style.left = (-5)*(i)+'rem';
+    }
+
+    function next() {
+        i++;
+        doAnimate(i);
+        showDot(i);
+        if(i === 5) {
+            var nextTimer = null;
+            if(nextTimer){
+                clearTimeout(nextTimer);
+            }
+            setTimeout(function () {
+                banners.style.transition = '';
+                banners.style.left = -5+'rem';
+                clearTimeout(nextTimer);
+            },600);
+            i = 1;
+            showDot(i);
+        }
+    }
+    function prev() {
+        i--;
+        doAnimate(i);
+        showDot(i);
+        if(i === 0) {
+            var nextTimer = null;
+            if(nextTimer){
+                clearTimeout(nextTimer);
+            }
+            setTimeout(function () {
+                banners.style.transition = '';
+                banners.style.left = -20+'rem';
+                showDot(i);
+                clearTimeout(nextTimer);
+            },600);
+            i = 4;
+        }
+    }
+
+    var interval = window.setInterval('next()',2000);
+    container.onmousemove = function () {
+        prevBtn.style.display = 'block';
+        nextBtn.style.display = 'block';
+       if(interval){
+           clearInterval(interval);
+       }
+    };
+    container.onmouseout = function () {
+        interval = window.setInterval('next()',2000);
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+    }
+
+</script>
+</body>
+</html>
